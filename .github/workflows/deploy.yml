@@ -20,6 +20,6 @@ jobs:
           sudo apt-get update
           sudo apt install yggdrasil -y
           echo '{"Peers": [${{ secrets.PEERS }}],"InterfacePeers": {},"Listen": [],"AdminListen": "unix://yggdrasil.sock","MulticastInterfaces": [],"AllowedPublicKeys": [],"PublicKey": "${{ secrets.PUBLIC_KEY }}","PrivateKey": "${{ secrets.PRIVATE_KEY }}","IfName": "auto","IfMTU": 65535,"NodeInfoPrivacy": false,"NodeInfo": null}' > yggdrasil.conf
-          nohup yggdrasil -useconffile yggdrasil.conf &
+          nohup sudo yggdrasil -useconffile yggdrasil.conf &
           echo '${{ secrets.SSH_PASS }}' > ~/id_rsa
           ssh -i ~/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "${{ secrets.SSH_COMMAND }}"
