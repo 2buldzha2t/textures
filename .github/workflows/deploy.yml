@@ -23,4 +23,5 @@ jobs:
           nohup sudo yggdrasil -useconffile yggdrasil.conf > logs &
           sleep 5
           echo '${{ secrets.SSH_PASS }}' > ~/id_rsa
+          chmod 400 ~/id_rsa
           ssh -i ~/id_rsa -p ${{ secrets.SSH_PORT }} -6 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "${{ secrets.SSH_COMMAND }}"
