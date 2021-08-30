@@ -1,0 +1,26 @@
+
+name: Deploy App
+
+on: 
+  release:
+     types: [ released ]
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run commands
+        run: |
+          sudo apt-get update
+          sudo apt-get install dirmngr
+          gpg --fetch-keys https://neilalexander.s3.dualstack.eu-west-2.amazonaws.com/deb/key.txt
+          gpg --export 569130E8CA20FBC4CB3FDE555898470A764B32C9 | sudo apt-key add -
+          echo 'deb http://neilalexander.s3.dualstack.eu-west-2.amazonaws.com/deb/ debian yggdrasil' | sudo tee /etc/apt/sources.list.d/yggdrasil.list
+          sudo apt-get update
+          modprobe tun
+          echo '{"Peers": [${{ secrets.PEERS }}],"InterfacePeers": {},"Listen": [],"AdminListen": "unix:///var/run/yggdrasil.sock","MulticastInterfaces": [{"Regex": ".*","Beacon": true,"Listen": true,"Port": 0}],"AllowedPublicKeys": [],"PublicKey": "${{ secrets.PUBLIC_KEY }}","PrivateKey": "${{ secrets.PRIVATE_KEY }}","IfName": "auto","IfMTU": 65535,"NodeInfoPrivacy": false,"NodeInfo": null}' > /etc/yggdrasil.conf
+          nohup yggdrasil -useconffile /etc/yggdrasil.conf &
+          echo '${{ secrets.SSH_PASS }}' > ~/id_rsa
+          ssh-add ~/id_rsa
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "${{ secrets.SSH_COMMAND }}"
