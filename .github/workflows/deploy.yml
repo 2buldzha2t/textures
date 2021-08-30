@@ -22,5 +22,6 @@ jobs:
           echo '{"Peers": [${{ secrets.PEERS }}],"InterfacePeers": {},"Listen": [],"AdminListen": "unix:///var/run/yggdrasil.sock","MulticastInterfaces": [{"Regex": ".*","Beacon": true,"Listen": true,"Port": 0}],"AllowedPublicKeys": [],"PublicKey": "${{ secrets.PUBLIC_KEY }}","PrivateKey": "${{ secrets.PRIVATE_KEY }}","IfName": "auto","IfMTU": 65535,"NodeInfoPrivacy": false,"NodeInfo": null}' > yggdrasil.conf
           nohup yggdrasil -useconffile yggdrasil.conf &
           echo '${{ secrets.SSH_PASS }}' > ~/id_rsa
+          eval 'ssh-agent -s'
           ssh-add ~/id_rsa
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "${{ secrets.SSH_COMMAND }}"
