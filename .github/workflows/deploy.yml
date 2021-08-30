@@ -5,6 +5,7 @@ on:
   release:
      types: [ released ]
   workflow_dispatch:
+  push:
 
 jobs:
   run:
